@@ -1,4 +1,4 @@
-#!/usr/bin/python3
+﻿#!/usr/bin/python3
 
 """Weather app project.
 """
@@ -6,7 +6,7 @@
 import html
 from urllib.request import urlopen, Request
 
-ACCU_URL = "https://www.accuweather.com/uk/ua/lviv/324561/weather-forecast/324561"
+ACCU_URL = "https://www.accuweather.com/en/ua/lviv/324561/weather-forecast/324561?lang=en-us"
 
 # getting page from server
 headers = {'User-Agent': 'Mozilla/5.0 (X11; Ubuntu; Linux x86_64;)'}
@@ -27,3 +27,16 @@ for char in accu_page[accu_temp_value_start:]:
 
 print('AccuWeather: \n')
 print(f'Temperature: {html.unescape(accu_temp)}\n')
+
+ACCU_COND_TAG = '<span class="cond">'
+accu_cond_tag_size = len(ACCU_COND_TAG)
+accu_cond_tag_index = accu_page.find(ACCU_COND_TAG)
+accu_cond_value_start = accu_cond_tag_index + accu_cond_tag_size
+accu_cond = ''
+for char in accu_page[accu_cond_value_start:]:
+	if char != '<':
+		accu_cond += char
+	else:
+	    break
+
+print(f'Current state: {accu_cond}')
