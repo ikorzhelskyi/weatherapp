@@ -62,5 +62,17 @@ for char in rp5_content[rp5_temp_tag_start:]:
 	else:
 	    break
 
+RP5_WIND_TAG = '<span class="wv_0" style="">'
+rp5_wind_tag = rp5_content.find(RP5_WIND_TAG)
+rp5_wind_tag_size = len(RP5_WIND_TAG)
+rp5_wind_tag_start = rp5_wind_tag + rp5_wind_tag_size
+rp5_wind = ""
+for char in rp5_content[rp5_wind_tag_start:]:
+	if char != '<':
+		rp5_wind += char
+	else:
+	    break
+
 print('RP5.ua: \n')
 print(f'Temperature: {html.unescape(rp5_temp)}\n')
+print(f'Wind: {html.unescape(rp5_wind)}')
