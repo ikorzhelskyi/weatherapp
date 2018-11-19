@@ -76,3 +76,36 @@ for char in rp5_content[rp5_cond_tag_start:]:
 print('RP5.ua: \n')
 print(f'Temperature: {html.unescape(rp5_temp)}\n')
 print(f'Condition: {html.unescape(rp5_cond)}')
+
+SIN_URL = ('https://ua.sinoptik.ua/%D0%BF%D0%BE%D0%B3%D0%BE'
+	       '%D0%B4%D0%B0-%D0%BB%D1%8C%D0%B2%D1%96%D0%B2')
+
+sin_request = Request(SIN_URL, headers=headers)
+sin_page = urlopen(sin_request).read()
+sin_content = sin_page.decode('utf-8')
+
+SIN_TEMP_TAG = '<p class="today-temp">'
+sin_temp_tag = sin_content.find(SIN_TEMP_TAG)
+sin_temp_tag_size = len(SIN_TEMP_TAG)
+sin_temp_tag_start = sin_temp_tag + sin_temp_tag_size
+sin_temp = ""
+for char in sin_content[sin_temp_tag_start:]:
+	if char != '<':
+		sin_temp += char
+	else:
+	    break
+
+SIN_COND_TAG = '<div class="description"> <!--noindex-->'
+sin_cond_tag = sin_content.find(SIN_COND_TAG)
+sin_cond_tag_size = len(SIN_COND_TAG)
+sin_cond_tag_start = sin_cond_tag + sin_cond_tag_size
+sin_cond = ""
+for char in sin_content[sin_cond_tag_start:]:
+	if char != '<':
+		sin_cond += char
+	else:
+	    break
+
+print('sinoptik.ua: \n')
+print(f'Temperature: {html.unescape(sin_temp)}\n')
+print(f'Condition: {html.unescape(sin_cond)}')
