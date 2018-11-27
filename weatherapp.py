@@ -1,4 +1,4 @@
-﻿#!/usr/bin/python3
+#!/usr/bin/python3
 
 """Weather app project.
 """
@@ -111,7 +111,7 @@ print(f'Temperature: {html.unescape(sin_temp)}\n')
 print(f'Condition: {html.unescape(sin_cond)}')
 
 def get_request_headers():
-	return {'User-Agent': 'Mozilla/5.0 (X11; Ubuntu; Linux x86_64;)'}
+    return {'User-Agent': 'Mozilla/5.0 (X11; Ubuntu; Linux x86_64;)'}
 
 def get_page_source(url):
     """Returns the content of the page by the given URL address.
@@ -119,7 +119,30 @@ def get_page_source(url):
 
     request = Request(url, headers=get_request_headers())
     page_source = urlopen(request).read()
-    return page_source.decode('utf-8')	
+    return page_source.decode('utf-8')
+
+def get_tag_content(page_content, tag):
+    """Finds the necessary data in the content of the page.
+    """
+
+    tag_index = page_content.find(tag)
+    tag_size = len(tag)
+    value_start = tag_index + tag_size
+
+    content = ''
+    for c in page_content[value_start:]:
+        if c != '<':
+            content += c
+        else:
+            break
+    return content
+
+def get_weather_info(page_content, tags):
+    """Returns information collected from tags.
+    """
+
+    return tuple([get_tag_content(page_content, tag) for tag in tags])
+
 
 def main():
     """Main entry point.
@@ -132,7 +155,7 @@ def main():
         url, tags = weather_sites[name]
         content = get_page_source(url)
         temp, condition = get_weather_info(content, tags)
-        produce_output(name, temp, condition)	
+        produce_output(name, temp, condition)
 
 if __name__ == '__main__':
-    main()     
+    main()
