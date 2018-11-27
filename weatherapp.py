@@ -110,6 +110,17 @@ print('sinoptik.ua: \n')
 print(f'Temperature: {html.unescape(sin_temp)}\n')
 print(f'Condition: {html.unescape(sin_cond)}')
 
+def get_request_headers():
+	return {'User-Agent': 'Mozilla/5.0 (X11; Ubuntu; Linux x86_64;)'}
+
+def get_page_source(url):
+    """Returns the content of the page by the given URL address.
+    """
+
+    request = Request(url, headers=get_request_headers())
+    page_source = urlopen(request).read()
+    return page_source.decode('utf-8')	
+
 def main():
     """Main entry point.
     """
