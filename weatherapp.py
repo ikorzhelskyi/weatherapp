@@ -109,3 +109,19 @@ for char in sin_content[sin_cond_tag_start:]:
 print('sinoptik.ua: \n')
 print(f'Temperature: {html.unescape(sin_temp)}\n')
 print(f'Condition: {html.unescape(sin_cond)}')
+
+def main():
+    """Main entry point.
+    """
+
+    weather_sites = {"AccuWeather": (ACCU_URL, ACCU_TAGS),
+                     "RP5": (RP5_URL, RP5_TAGS),
+                     "SINOPTIK": (SIN_URL, SIN_TAGS)}
+    for name in weather_sites:
+        url, tags = weather_sites[name]
+        content = get_page_source(url)
+        temp, condition = get_weather_info(content, tags)
+        produce_output(name, temp, condition)	
+
+if __name__ == '__main__':
+    main()     
