@@ -143,6 +143,13 @@ def get_weather_info(page_content, tags):
 
     return tuple([get_tag_content(page_content, tag) for tag in tags])
 
+def produce_output(provider_name, temp, condition):
+    """Formats and displays the found data.
+    """
+    
+    print(f'\n {provider_name}')
+    print(f'Temperature: {html.unescape(temp)}\n')
+    print(f'Condition: {condition}\n')
 
 def main():
     """Main entry point.
