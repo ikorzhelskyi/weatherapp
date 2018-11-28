@@ -3,7 +3,9 @@
 """Weather app project.
 """
 
+import sys
 import html
+import argparse
 from urllib.request import urlopen, Request
 
 ACCU_URL = "https://www.accuweather.com/uk/ua/lviv/324561/weather-forecast/324561"
@@ -60,13 +62,30 @@ def produce_output(provider_name, temp, condition):
     print(f'Temperature: {html.unescape(temp)}\n')
     print(f'Condition: {condition}\n')
 
-def main():
+def main(argv):
     """Main entry point.
     """
+    
+    KNOWN_COMMANDS = {'accu': 'AccuWeather'}
 
+    parser = argparse.ArgumentParser()
+    parser.add_argument('command', help='Service name', nargs=1)
+    params = parser.parse_args(argv)
+    
     weather_sites = {"AccuWeather": (ACCU_URL, ACCU_TAGS),
                      "RP5": (RP5_URL, RP5_TAGS),
                      "SINOPTIK": (SIN_URL, SIN_TAGS)}
+
+    if params.command:
+        command = params.command[0]
+        if command in KNOWN_COMMANDS:
+            weather_sites = {
+                KNOWN_COMMANDS[command]: weather_sites[KNOWN_COMMANDS[command]]
+                }
+        else:
+            print("Unknown command provided!")
+            sys.exit(1)
+
     for name in weather_sites:
         url, tags = weather_sites[name]
         content = get_page_source(url)
@@ -74,4 +93,4 @@ def main():
         produce_output(name, temp, condition)
 
 if __name__ == '__main__':
-    main()
+    main(sys.argv[1:])
