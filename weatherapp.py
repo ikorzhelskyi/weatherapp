@@ -66,7 +66,7 @@ def main(argv):
     """Main entry point.
     """
     
-    KNOWN_COMMANDS = {'accu': 'AccuWeather', 'rp5': 'RP5'}
+    KNOWN_COMMANDS = {'accu': 'AccuWeather', 'rp5': 'RP5', 'sin': 'SINOPTIK'}
 
     parser = argparse.ArgumentParser()
     parser.add_argument('command', help='Service name', nargs=1)
