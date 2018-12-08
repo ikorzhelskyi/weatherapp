@@ -72,6 +72,7 @@ def get_page_source(url):
 
     request = Request(url, headers=get_request_headers())
     page_source = urlopen(request).read()
+    save_cache(url, page_source)
     return page_source.decode('utf-8')
 
 def get_locations(locations_url):
