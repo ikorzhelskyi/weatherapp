@@ -5,6 +5,7 @@
 
 import sys
 import html
+import time
 import hashlib
 import re
 import argparse
@@ -27,6 +28,7 @@ CONFIG_LOCATION = 'Location'
 CONFIG_FILE = 'weatherapp.ini'
 
 CACHE_DIR = '.wappcache'
+CACHE_TIME = 300
 
 RP5_URL = ('http://rp5.ua/%D0%9F%D0%BE%D0%B3%D0%BE%D0%B4%D0%B0_%D1%83_'
             '%D0%9B%D1%8C%D0%B2%D0%BE%D0%B2%D1%96,_%D0%9B%D1%8C%D0%B2%D1'
@@ -76,6 +78,12 @@ def save_cache(url, page_source):
         cache_file.write(page_source)
 
 
+def is_valid(path):
+    """Check if current cache is valid,
+    """
+
+    return (time.time() - path.stat().st_mtime) < CACHE_TIME
+
 def get_cache(url):
     """Return cache data if any.
     """
@@ -85,7 +93,7 @@ def get_cache(url):
     cache_dir = get_cache_directory()
     if cache_dir.exists():
         cache_path = cache_dir / url_hash
-        if cache_path.exists():    
+        if cache_path.exists() and is_valid(cache_path):    
             with cache_path.open('rb') as cache_file:   
                 cache = cache_file.read()
 
