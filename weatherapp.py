@@ -47,7 +47,7 @@ SIN_TAGS = ('<p class="today-temp">'
 def get_request_headers():
     """Returns custom headers for url request.
     """
-    
+
     return {'User-Agent': 'Mozilla/5.0 (X11; Ubuntu; Linux x86_64;)'}
 
 
@@ -79,10 +79,11 @@ def save_cache(url, page_source):
 
 
 def is_valid(path):
-    """Check if current cache is valid,
+    """Check if current cache is valid.
     """
 
     return (time.time() - path.stat().st_mtime) < CACHE_TIME
+
 
 def get_cache(url):
     """Return cache data if any.
@@ -100,12 +101,12 @@ def get_cache(url):
     return cache
 
 
-def get_page_source(url):
+def get_page_source(url, refresh=False):
     """Gets page source by given url address.
     """
 
     cache = get_cache(url)
-    if cache:
+    if cache and not refresh:
         page_source = cache
     else:
         request = Request(url, headers=get_request_headers())
@@ -115,8 +116,8 @@ def get_page_source(url):
     return page_source.decode('utf-8')
 
 
-def get_locations(locations_url):
-    locations_page = get_page_source(locations_url)
+def get_locations(locations_url, refresh=False):
+    locations_page = get_page_source(locations_url, refresh=refresh)
     soup = BeautifulSoup(locations_page, 'html.parser')
 
     locations = []
@@ -143,12 +144,13 @@ def save_configuration(name, url):
     parser[CONFIG_LOCATION] = {'name': name, 'url': url}
 
     with open(get_configuration_file(), 'w') as configfile:
-       parser.write(configfile)
+        parser.write(configfile)
 
 
 def get_configuration():
     """Returns configured location name and url.
     """
+
     name = DEFAULT_NAME
     url = DEFAULT_URL
 
@@ -158,18 +160,18 @@ def get_configuration():
     if CONFIG_LOCATION in parser.sections():
         config = parser[CONFIG_LOCATION]
         name, url = config['name'], config['url']
-    
+
     return name, url
 
 
-def configurate():
-    locations = get_locations(ACCU_BROWSE_LOCATIONS)
+def configurate(refresh=False):
+    locations = get_locations(ACCU_BROWSE_LOCATIONS, refresh=refresh)
     while locations:
         for index, location in enumerate(locations):
             print(f'{index + 1}. {location[0]}')
         selected_index = int(input('Please select location: '))
         location = locations[selected_index - 1]
-        locations = get_locations(location[1])
+        locations = get_locations(location[1], refresh=refresh)
 
     save_configuration(*location)
 
@@ -192,7 +194,7 @@ def get_tag_content(page_content, tag):
     return content
 
 
-def get_weather_info(page_content):
+def get_weather_info(page_content, refresh=False):
     """Gets data from the site using the BeautifulSoup library
     """
 
@@ -204,7 +206,7 @@ def get_weather_info(page_content):
     if current_day_section:
         current_day_url = current_day_section.find('a').attrs['href']
         if current_day_url:
-            current_day_page = get_page_source(current_day_url)
+            current_day_page = get_page_source(current_day_url, refresh=refresh)
             if current_day_page:
                 current_day = \
                     BeautifulSoup(current_day_page, 'html.parser')
@@ -231,6 +233,7 @@ def get_weather_info(page_content):
 def produce_output(city_name, info):
     """Formats and displays the found data.
     """
+
     print('AccuWeather: \n')
     print(f'{city_name}')
     print('_'*20)
@@ -238,10 +241,10 @@ def produce_output(city_name, info):
         print(f'{key}: {html.unescape(value)}')
 
 
-def get_accu_weather_info():
+def get_accu_weather_info(refresh=False):
     city_name, city_url = get_configuration()
-    content = get_page_source(city_url)
-    produce_output(city_name, get_weather_info(content))
+    content = get_page_source(city_url, refresh=refresh)
+    produce_output(city_name, get_weather_info(content, refresh=refresh))
 
 
 def main(argv):
@@ -253,12 +256,13 @@ def main(argv):
 
     parser = argparse.ArgumentParser()
     parser.add_argument('command', help='Service name', nargs=1)
+    parser.add_argument('--refresh', help='Update caches', action='store_true')
     params = parser.parse_args(argv)
 
     if params.command:
         command = params.command[0]
         if command in KNOWN_COMMANDS:
-            KNOWN_COMMANDS[command]()
+            KNOWN_COMMANDS[command](refresh=params.refresh)
         else:
             print("Unknown command provided!")
             sys.exit(1)
