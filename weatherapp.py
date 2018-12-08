@@ -1,37 +1,108 @@
-#!/usr/bin/python3
+#!/usr/bin/env python
 
-"""Weather app project.
+"""Script for scraping data from weather sites.
 """
 
 import sys
 import html
+import re
 import argparse
-from bs4 import BeautifulSoup
+import configparser
+from pathlib import Path
 from urllib.request import urlopen, Request
 
-ACCU_URL = "https://www.accuweather.com/uk/ua/lviv/324561/weather-forecast/324561"
+from bs4 import BeautifulSoup
+
+ACCU_URL = ("https://www.accuweather.com/"
+            "uk/ua/lviv/324561/weather-forecast/324561")
 ACCU_TAGS = ('<span class="large-temp">', '<span class="cond">')
+ACCU_BROWSE_LOCATIONS = 'https://www.accuweather.com/uk/browse-locations'
+
+DEFAULT_NAME = 'Lviv'
+DEFAULT_URL = 'https://www.accuweather.com/uk/ua/lviv/324561/weather-forecast/324561'
+
+CONFIG_LOCATION = 'Location'
+CONFIG_FILE = 'weatherapp.ini'
 
 RP5_URL = ('http://rp5.ua/%D0%9F%D0%BE%D0%B3%D0%BE%D0%B4%D0%B0_%D1%83_'
             '%D0%9B%D1%8C%D0%B2%D0%BE%D0%B2%D1%96,_%D0%9B%D1%8C%D0%B2%D1'
             '%96%D0%B2%D1%81%D1%8C%D0%BA%D0%B0_%D0%BE%D0%B1%D0%BB%D0%B0%D1'
             '%81%D1%82%D1%8C')
-RP5_TAGS = ('<span class="t_0" style="display: block;">', '<div class="cn5" onmouseover="tooltip(this, \'<b>')
+
+RP5_TAGS = ('<span class="t_0" style="display: block;">',
+            '<div class="cn5" onmouseover="tooltip(this, \'<b>')
 
 SIN_URL = ('https://ua.sinoptik.ua/%D0%BF%D0%BE%D0%B3%D0%BE'
             '%D0%B4%D0%B0-%D0%BB%D1%8C%D0%B2%D1%96%D0%B2')
-SIN_TAGS = ('<p class="today-temp">', '<div class="description"> <!--noindex-->')
+
+SIN_TAGS = ('<p class="today-temp">'
+            '<div class="description"> <!--noindex-->')
 
 def get_request_headers():
+    """Returns custom headers for url request.
+    """
+    
     return {'User-Agent': 'Mozilla/5.0 (X11; Ubuntu; Linux x86_64;)'}
 
 def get_page_source(url):
-    """Returns the content of the page by the given URL address.
+    """Gets page source by given url address.
     """
 
     request = Request(url, headers=get_request_headers())
     page_source = urlopen(request).read()
     return page_source.decode('utf-8')
+
+def get_locations(locations_url):
+    locations_page = get_page_source(locations_url)
+    soup = BeautifulSoup(locations_page, 'html.parser')
+
+    locations = []
+    for location in soup.find_all('li', class_='drilldown cl'):
+        url = location.find('a').attrs['href']
+        location = location.find('em').text
+        locations.append((location, url))
+    return locations
+
+def get_configuration_file():
+    """Returns path to configuration file in home directory.
+    """
+
+    return Path.home() / CONFIG_FILE
+
+def save_configuration(name, url):
+    """Save selected location to configuration file.
+    """
+
+    parser = configparser.ConfigParser()
+    parser[CONFIG_LOCATION] = {'name': name, 'url': url}
+    with open(get_configuration_file(), 'w') as configfile:
+       parser.write(configfile)
+
+def get_configuration():
+    """Returns configured location name and url.
+    """
+    name = DEFAULT_NAME
+    url = DEFAULT_URL
+
+    parser = configparser.ConfigParser()
+    parser.read(get_configuration_file())
+
+    if CONFIG_LOCATION in parser.sections():
+        config = parser[CONFIG_LOCATION]
+        name, url = config['name'], config['url']
+    
+    return name, url
+
+def configurate():
+    locations = get_locations(ACCU_BROWSE_LOCATIONS)
+    while locations:
+        for index, location in enumerate(locations):
+            print(f'{index + 1}. {location[0]}')
+        selected_index = int(input('Please select location: '))
+        location = locations[selected_index - 1]
+        locations = get_locations(location[1])
+
+    save_configuration(*location)
 
 def get_tag_content(page_content, tag):
     """Finds the necessary data in the content of the page.
@@ -54,8 +125,7 @@ def get_weather_info(page_content):
     """
 
     city_page = BeautifulSoup(page_content, 'html.parser')
-    current_day_section = city_page.find(
-        'li', class_='night current first cl')
+    current_day_section = city_page.find('li', class_=re.compile('(day|night) current first cl'))
 
     weather_info = {}
     if current_day_section:
@@ -84,42 +154,38 @@ def get_weather_info(page_content):
 
     return weather_info
 
-def produce_output(info):
+def produce_output(city_name, info):
     """Formats and displays the found data.
     """
     print('AccuWeather: \n')
-
+    print(f'{city_name}')
+    print('_'*20)
     for key, value in info.items():
         print(f'{key}: {html.unescape(value)}')
+
+def get_accu_weather_info():
+    city_name, city_url = get_configuration()
+    content = get_page_source(city_url)
+    produce_output(city_name, get_weather_info(content))
 
 def main(argv):
     """Main entry point.
     """
 
-    KNOWN_COMMANDS = {'accu': 'AccuWeather', 'rp5': 'RP5', 'sin': 'SINOPTIK'}
+    KNOWN_COMMANDS = {'accu': get_accu_weather_info,
+                      'config': configurate}
 
     parser = argparse.ArgumentParser()
     parser.add_argument('command', help='Service name', nargs=1)
     params = parser.parse_args(argv)
 
-    weather_sites = {"AccuWeather": (ACCU_URL, ACCU_TAGS),
-                     "RP5": (RP5_URL, RP5_TAGS),
-                     "SINOPTIK": (SIN_URL, SIN_TAGS)}
-
     if params.command:
         command = params.command[0]
         if command in KNOWN_COMMANDS:
-            weather_sites = {
-                KNOWN_COMMANDS[command]: weather_sites[KNOWN_COMMANDS[command]]
-                }
+            KNOWN_COMMANDS[command]()
         else:
             print("Unknown command provided!")
             sys.exit(1)
-
-    for name in weather_sites:
-        url, tags = weather_sites[name]
-        content = get_page_source(url)
-        produce_output(get_weather_info(content))
 
 if __name__ == '__main__':
     main(sys.argv[1:])
