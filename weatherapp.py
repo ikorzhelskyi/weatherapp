@@ -19,7 +19,8 @@ ACCU_TAGS = ('<span class="large-temp">', '<span class="cond">')
 ACCU_BROWSE_LOCATIONS = 'https://www.accuweather.com/uk/browse-locations'
 
 DEFAULT_NAME = 'Lviv'
-DEFAULT_URL = 'https://www.accuweather.com/uk/ua/lviv/324561/weather-forecast/324561'
+DEFAULT_URL = ('https://www.accuweather.com/uk/ua/'
+               'lviv/324561/weather-forecast/324561')
 
 CONFIG_LOCATION = 'Location'
 CONFIG_FILE = 'weatherapp.ini'
@@ -125,7 +126,8 @@ def get_weather_info(page_content):
     """
 
     city_page = BeautifulSoup(page_content, 'html.parser')
-    current_day_section = city_page.find('li', class_=re.compile('(day|night) current first cl'))
+    current_day_section = city_page.find(
+        'li', class_=re.compile('(day|night) current first cl'))
 
     weather_info = {}
     if current_day_section:
