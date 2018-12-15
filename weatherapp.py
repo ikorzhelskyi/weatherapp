@@ -33,7 +33,7 @@ def get_cache_directory():
 def get_url_hash(url):
     """Generates hash for given url.
     """
-    
+
     return hashlib.md5(url.encode('utf-8')).hexdigest()
 
 
@@ -99,41 +99,6 @@ def get_locations(locations_url, refresh=False):
         locations.append((location, url))
 
     return locations
-
-
-def get_configuration_file():
-    """Returns path to configuration file in home directory.
-    """
-
-    return Path.home() / CONFIG_FILE
-
-
-def save_configuration(name, url):
-    """Save selected location to configuration file.
-    """
-
-    parser = configparser.ConfigParser()
-    parser[CONFIG_LOCATION] = {'name': name, 'url': url}
-
-    with open(get_configuration_file(), 'w') as configfile:
-        parser.write(configfile)
-
-
-def get_configuration():
-    """Returns configured location name and url.
-    """
-
-    name = DEFAULT_NAME
-    url = DEFAULT_URL
-
-    parser = configparser.ConfigParser()
-    parser.read(get_configuration_file())
-
-    if CONFIG_LOCATION in parser.sections():
-        config = parser[CONFIG_LOCATION]
-        name, url = config['name'], config['url']
-
-    return name, url
 
 
 def configurate(refresh=False):

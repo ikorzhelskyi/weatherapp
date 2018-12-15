@@ -9,8 +9,8 @@ FAKE_MOZILLA_AGENT = 'Mozilla/5.0 (X11; Ubuntu; Linux x86_64;)'
 CONFIG_FILE = 'weatherapp.ini'
 CONFIG_LOCATION = 'Location'
 
-DEFAULT_NAME = 'Lviv'
-DEFAULT_URL = \
+DEFAULT_LOCATION_NAME = 'Lviv'
+DEFAULT_LOCATION_URL = \
     'https://www.accuweather.com/uk/ua/lviv/324561/weather-forecast/324561'
 
 CACHE_DIR = '.wappcache'
