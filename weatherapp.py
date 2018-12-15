@@ -16,63 +16,6 @@ from urllib.request import urlopen, Request
 from bs4 import BeautifulSoup
 
 
-def get_request_headers():
-    """Returns custom headers for url request.
-    """
-
-    return {'User-Agent': 'Mozilla/5.0 (X11; Ubuntu; Linux x86_64;)'}
-
-
-def get_cache_directory():
-    """Path to cache directory.
-    """
-
-    return Path.home() / CACHE_DIR
-
-
-def get_url_hash(url):
-    """Generates hash for given url.
-    """
-
-    return hashlib.md5(url.encode('utf-8')).hexdigest()
-
-
-def save_cache(url, page_source):
-    """Save page source data to file.
-    """
-
-    url_hash = get_url_hash(url)
-    cache_dir = get_cache_directory()
-    if not cache_dir.exists():
-        cache_dir.mkdir(parents=True)
-
-    with  (cache_dir / url_hash).open('wb') as cache_file:
-        cache_file.write(page_source)
-
-
-def is_valid(path):
-    """Check if current cache is valid.
-    """
-
-    return (time.time() - path.stat().st_mtime) < CACHE_TIME
-
-
-def get_cache(url):
-    """Return cache data if any.
-    """
-
-    cache = b''
-    url_hash = get_url_hash(url)
-    cache_dir = get_cache_directory()
-    if cache_dir.exists():
-        cache_path = cache_dir / url_hash
-        if cache_path.exists() and is_valid(cache_path):    
-            with cache_path.open('rb') as cache_file:   
-                cache = cache_file.read()
-
-    return cache
-
-
 def get_page_source(url, refresh=False):
     """Gets page source by given url address.
     """
