@@ -1,3 +1,4 @@
+ACCU_PROVIDER_NAME = 'accu'
 ACCU_URL = ('https://www.accuweather.com/'
             'uk/ua/lviv/324561/weather-forecast/324561')
 ACCU_TAGS = ('<span class="large-temp">', '<span class="cond">')
