@@ -1,8 +1,12 @@
+"""Weather providers.
+"""
+
 import time
 import hashlib
 import re
 import configparser
 from pathlib import Path
+import urllib
 from urllib.request import Request, urlopen
 
 from bs4 import BeautifulSoup
@@ -36,7 +40,7 @@ class AccuWeatherProvider:
         """
 
         name = config.DEFAULT_LOCATION_NAME
-        url = config.DEFAULT_LOCATION_URL
+        url = config.ACCU_DEFAULT_LOCATION_URL
         configuration = configparser.ConfigParser()
         configuration.read(self.get_configuration_file())
         if config.CONFIG_LOCATION in configuration.sections():
@@ -133,6 +137,8 @@ class AccuWeatherProvider:
         return locations
 
     def configurate(self, refresh=False):
+        """Configure provider.
+        """
         locations = self.get_locations(config.ACCU_BROWSE_LOCATIONS)
         while locations:
             for index, location in enumerate(locations):
@@ -140,14 +146,13 @@ class AccuWeatherProvider:
             selected_index = int(input('Please select location: '))
             location = locations[selected_index - 1]
             locations = self.get_locations(location[1], refresh=refresh)
-
         self.save_configuration(*location)
 
-    def get_weather_info(self, page_content, refresh=False):
+    def get_weather_info(self, page_source, refresh=False):
         """Gets data from the site using the BeautifulSoup library
         """
 
-        city_page = BeautifulSoup(page_content, 'html.parser')
+        city_page = BeautifulSoup(page_source, 'html.parser')
         current_day_section = city_page.find(
             'li', class_=re.compile('(day|night) current first cl'))
 
@@ -182,3 +187,16 @@ class AccuWeatherProvider:
     def run(self, refresh=False):
         content = self.get_page_source(self.url, refresh=refresh)
         return self.get_weather_info(content,refresh=refresh)
+
+
+class Rp5WeatherProvider:
+
+    """Weather provider for rp5.ua site.
+    """
+
+    def __init__(self):
+        self.name = config.RP5_PROVIDER_NAME
+
+        location, url = self.get_configuration()
+        self.location = location
+        self.url = url
