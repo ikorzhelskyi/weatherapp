@@ -286,3 +286,119 @@ class Rp5WeatherProvider:
 
         with  (cache_dir / self.get_url_hash(url)).open('wb') as cache_file:
             cache_file.write(page_source)
+
+    def get_request_headers(self):
+        """Returns custom headers for url request.
+        """
+
+        return {'User-Agent': config.FAKE_MOZILLA_AGENT}
+
+    def get_page_source(self, url, refresh=False):
+        """Gets page source by given url address.
+        """
+
+        cache = self.get_cache(url)
+        if cache and not refresh:
+            page_source = cache
+        else:
+            request = Request(url, headers=self.get_request_headers())
+            page_source = urlopen(request).read()
+            self.save_cache(url, page_source)
+        return page_source.decode('utf-8')
+
+    def get_locations_rp5(self, locations_url, refresh=False):
+        """Return a list of locations and related urls"""
+
+        locations_page = self.get_page_source(locations_url, refresh=refresh)
+        soup = BeautifulSoup(locations_page, 'html.parser')
+        locations = []
+        places = soup.find_all('div', class_='country_map_links')
+        if not places:
+            places = soup.find_all('a', class_='href20')
+            if not places:
+                places = soup.find_all('div', class_='city_link')
+                for place in places:
+                    url = place.find('a').attrs['href']
+                    url = f'http://rp5.ua/{url}'
+                    location = place.text
+                    locations.append((location, url))
+                    return locations
+            for place in places:
+                url = place.attrs['href']
+                url = f'http://rp5.ua/{url}'
+                location = place.text
+                locations.append((location, url))
+        else:
+            for location in places:
+                url = location.find('b')
+                url = url.find('a').attrs['href']
+                url = f'http://rp5.ua{url}'
+                location = location.find('b').text[:-1]
+                locations.append((location, url))
+
+        return locations
+
+    def configurate(self):
+        """Configure provider.
+        """
+        countries = self.get_countries(config.RP5_BROWSE_LOCATIONS)
+        for index, country in enumerate(countries):
+            self.stdout.write(f'{index + 1}, {country[0]}\n')
+        selected_index = int(input('Please select city: '))
+        city = cities[selected_index - 1]
+        self.save_configuration(*city)
+
+    def get_countries(self, countries_url):
+        countries_page = self.get_page_source(countries_url)
+        soup = BeautifulSoup(countries_page, countries_url)
+        base = urllib.parse.urlunsplit(
+            urllib.parse.urlparse(countries_url)[:2] + ('/', '', ''))
+        countries = []
+        for country in soup.find_all('div', class_='country_map_links'):
+            url = urllib.parse.urljoin(base, country.find('a').attrs['href'])
+            country = country.find('a').text
+            countries.append((country, url))
+        return countries
+
+    def get_cities(self, country_url):
+        cities = []
+        cities_page = self. get_page_source(country_url)
+        soup = BeautifulSoup(cities_page, 'html.parser')
+        base = urllib.parse.urlunsplit(
+            urllib.parse.urlparse(country_url)[:2] + ('/', '', ''))
+        country_map = soup.find('div', class_='countryMap')
+        if country_map:
+            cities_list = country_map.find_all('h3')
+            for city in cities_list:
+                url = urllib.parse.urljoin(base,city.find('f').attrs['href'])
+                city = city.find('a').text
+                cities.append((city, url))
+        return cities
+
+    def get_weather_info(self, page_source, refresh=False):
+        """Gets data from the site using the BeautifulSoup library
+        """
+
+        city_page = BeautifulSoup(page_source, 'html.parser')
+        current_day = city_page.find('div', id='archiveString')
+
+        weather_info = {'cond': '', 'temp': '', 'feal_temp': '', 'wind': ''}
+        if current_day:
+            archive_info = current_day.find('div', class_='ArchiveInfo')
+            if archive_info:
+                archive_text = archive_info.text
+                info_list = archive_text.split(',')
+                weather_info['cond'] = info_list[1].strip()
+                temp = archive_info.find('span', class_='t_0')
+                if temp:
+                    weather_info['temp'] = temp.text
+                wind = info_list[3].strip()[:info_list[3].find(')') + 1]
+                wind += info_list[4]
+                if wind:
+                    weather_info['wind'] = wind 
+
+        return weather_info
+
+    def run(self, refresh=False):
+        content = self.get_page_source(self.url, refresh=refresh)
+        return self.get_weather_info(content,refresh=refresh)
