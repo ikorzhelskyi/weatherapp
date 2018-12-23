@@ -60,10 +60,8 @@ class AccuWeatherProvider:
 
         parser = configparser.ConfigParser()
         parser[config.CONFIG_LOCATION] = {'name': name, 'url': url}
-
         with open(self.get_configuration_file(), 'w') as configfile:
             parser.write(configfile)
-
 
     def get_request_headers(self):
         """Returns custom headers for url request.
@@ -235,7 +233,6 @@ class Rp5WeatherProvider:
 
         parser = configparser.ConfigParser()
         parser[config.CONFIG_LOCATION] = {'name': name, 'url': url}
-
         with open(self.get_configuration_file(), 'w') as configfile:
             parser.write(configfile)
 
@@ -283,7 +280,6 @@ class Rp5WeatherProvider:
         cache_dir = self.get_cache_directory()
         if not cache_dir.exists():
             cache_dir.mkdir(parents=True)
-
         with  (cache_dir / self.get_url_hash(url)).open('wb') as cache_file:
             cache_file.write(page_source)
 
@@ -335,7 +331,6 @@ class Rp5WeatherProvider:
                 url = f'http://rp5.ua{url}'
                 location = location.find('b').text[:-1]
                 locations.append((location, url))
-
         return locations
 
     def configurate(self):
@@ -395,8 +390,7 @@ class Rp5WeatherProvider:
                 wind = info_list[3].strip()[:info_list[3].find(')') + 1]
                 wind += info_list[4]
                 if wind:
-                    weather_info['wind'] = wind 
-
+                    weather_info['wind'] = wind
         return weather_info
 
     def run(self, refresh=False):
