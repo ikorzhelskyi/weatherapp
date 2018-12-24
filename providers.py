@@ -42,7 +42,7 @@ class WeatherProvider:
         name = self.default_location
         url = self.default_url
         configuration = configparser.ConfigParser()
-        
+
         configuration.read(self.get_configuration_file())
         if config.CONFIG_LOCATION in configuration.sections():
             location_config = configuration[config.CONFIG_LOCATION]
@@ -51,7 +51,7 @@ class WeatherProvider:
 
     def save_configuration(self, name, url):
         """Save selected location to configuration file.
-        
+
         :param name: city name
         :param type: str
 
@@ -128,7 +128,7 @@ class WeatherProvider:
     def run(self):
         """Runs provider.
         """
-        
+
         content = self.get_page_source(self.url)
         return self.get_weather_info(content)
 
@@ -147,7 +147,7 @@ class AccuWeatherProvider(WeatherProvider):
     def get_locations(self, locations_url):
         """Gets list of available locations.
         """
-        
+
         locations_page = self.get_page_source(locations_url)
         soup = BeautifulSoup(locations_page, 'html.parser')
         locations = []
@@ -160,16 +160,16 @@ class AccuWeatherProvider(WeatherProvider):
     def configurate(self):
         """Configure provider.
         """
-        
+
         locations = self.get_locations(config.ACCU_BROWSE_LOCATIONS)
         while locations:
             for index, location in enumerate(locations):
                 print(f'{index + 1}. {location[0]}')
-            
+
             selected_index = int(input('Please select location: '))
             location = locations[selected_index - 1]
             locations = self.get_locations(location[1])
-        
+
         self.save_configuration(*location)
 
     def get_weather_info(self, page_source):
@@ -245,7 +245,7 @@ class Rp5WeatherProvider(WeatherProvider):
                 city = city.find('a').text
                 cities.append((city, url))
         return cities
-    
+
     def configurate(self):
         """Configure provider.
         """
