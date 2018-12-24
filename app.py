@@ -53,7 +53,7 @@ class App:
             pass
 
 
-def main(argv=sys.argv[1:])
+def main(argv=sys.argv[1:]):
     """Main entry point.
     """    
 

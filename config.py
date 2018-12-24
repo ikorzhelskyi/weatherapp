@@ -6,7 +6,7 @@ DEFAULT_ACCU_LOCATION_URL = \
     'https://www.accuweather.com/uk/ua/lviv/324561/weather-forecast/324561'
 
 RP5_PROVIDER_NAME = 'rp5'
-RP5_POVIDER_TITLE = 'RP5'
+RP5_PROVIDER_TITLE = 'RP5'
 RP5_BROWSE_LOCATIONS = 'http://rp5.ua/Weather_in_the_world'
 DEFAULT_RP5_LOCATION_NAME = 'Lviv'
 DEFAULT_RP5_LOCATION_URL = ('http://rp5.ua/%D0%9F%D0%BE%D0%B3%D0%BE%D0%B4%D0'
