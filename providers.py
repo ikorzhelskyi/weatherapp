@@ -26,7 +26,8 @@ class WeatherProvider:
         self.location = location
         self.url = url
 
-    def get_configuration_file(self):
+    @staticmethod
+    def get_configuration_file():
         """Returns path to configuration file in home directory.
         """
 
@@ -64,25 +65,29 @@ class WeatherProvider:
         with open(self.get_configuration_file(), 'w') as configfile:
             parser.write(configfile)
 
-    def get_request_headers(self):
+    @staticmethod
+    def get_request_headers():
         """Returns custom headers for url request.
         """
 
         return {'User-Agent': config.FAKE_MOZILLA_AGENT}
 
-    def get_url_hash(self, url):
+    @staticmethod
+    def get_url_hash(url):
         """Generates url hash.
         """
 
         return hashlib.md5(url.encode('utf-8')).hexdigest()
 
-    def get_cache_directory(self):
+    @staticmethod
+    def get_cache_directory():
         """Path to cache directory.
         """
 
         return Path.home() / config.CACHE_DIR
 
-    def is_valid(self, path):
+    @staticmethod
+    def is_valid(path):
         """Checks if current cache is valid.
         """
 
