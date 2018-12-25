@@ -15,6 +15,8 @@ def one_moment(func):
 
 
 def slow_down(sec=1):
+    """Slows down a function for an arbitrary number of seconds.
+    """
 
     def one_moment(func):
         """Waits one second before calling function.
@@ -37,4 +39,15 @@ def timer(func):
         run_time = time.perf_counter() - start_time
         print(f"Finished {func.__name__!r} in {run_time:.4f} secs")
         return result
+    return wrapper
+
+
+def print_arguments(func):
+    """Prints all the arguments received by the function before it is executed.
+    """
+
+    def wrapper(*args, **kwargs):
+        print(*args, ** kwargs)
+        res = func(*args, **kwargs)
+        return res
     return wrapper
