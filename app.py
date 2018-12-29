@@ -51,17 +51,15 @@ class App:
         if not command_name:
             # run all weather providers by default
             for name, provider in self.providermanager._providers.items():
-                provider_obj = provider(self)
-                self.produce_output(provider_obj.title,
-                                    provider_obj.location,
-                                    provider_obj.run())
+                self.produce_output(provider.title,
+                                    provider(self).location,
+                                    provider(self).run(remaining_args))
         elif command_name in self.providermanager:
             # run specific provider
-            provider = self.providermanager[command_name]
-            provider_obj = provider(self)
-            self.produce_output(provider_obj.title,
-                                    provider_obj.location,
-                                    provider_obj.run())
+            provider = self.providermanager[command_name](self)
+            self.produce_output(provider.title,
+                                provider.location,
+                                provider.run(remaining_args))
 
 
 def main(argv=sys.argv[1:]):
