@@ -62,3 +62,17 @@ def counted(func):
         return func(*args, **kwargs)
     wrapper.called = 0
     return wrapper
+
+
+def func_cache(func):
+    """ Caches the result of the function.
+    """
+
+    cache = dict()
+    def wrapper(*args):
+        if args in cache:
+            return cache[args]
+        result = func(*args)
+        cache[args] = result
+        return result
+    return wrapper
