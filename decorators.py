@@ -5,7 +5,7 @@ import time
 
 
 def one_moment(func):
-    """Waits one second before calling function.
+    """ Waits one second before calling function.
     """
 
     def wrapper(*args, **kwargs):
@@ -15,11 +15,11 @@ def one_moment(func):
 
 
 def slow_down(sec=1):
-    """Slows down a function for an arbitrary number of seconds.
+    """ Slows down a function for an arbitrary number of seconds.
     """
 
     def one_moment(func):
-        """Waits one second before calling function.
+        """ Waits one second before calling function.
         """
 
         def wrapper(*args, **kwargs):
@@ -30,7 +30,7 @@ def slow_down(sec=1):
 
 
 def timer(func):
-    """Prints the runtime of the decorated function.
+    """ Prints the runtime of the decorated function.
     """
 
     def wrapper(*args, **kwargs):
@@ -43,11 +43,11 @@ def timer(func):
 
 
 def print_arguments(func):
-    """Prints all the arguments received by the function before it is executed.
+    """ Prints all arguments received by the function before it is executed.
     """
 
     def wrapper(*args, **kwargs):
-        print(*args, ** kwargs)
+        print(args, kwargs)
         res = func(*args, **kwargs)
         return res
     return wrapper
