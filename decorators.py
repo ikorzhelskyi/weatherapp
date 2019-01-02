@@ -76,3 +76,15 @@ def func_cache(func):
         cache[args] = result
         return result
     return wrapper
+
+
+def singleton(cls):
+    """ Singleton decorator for class.
+    """
+
+    instances = {}
+    def wrapper(*args, **kwargs):
+        if cls not in instances:
+          instances[cls] = cls(*args, **kwargs)
+        return instances[cls]
+    return wrapper
