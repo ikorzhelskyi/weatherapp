@@ -51,3 +51,14 @@ def print_arguments(func):
         res = func(*args, **kwargs)
         return res
     return wrapper
+
+
+def counted(func):
+    """ Counts how many times the function was called.
+    """
+
+    def wrapper(*args, **kwargs):
+        wrapper.called += 1
+        return func(*args, **kwargs)
+    wrapper.called = 0
+    return wrapper
