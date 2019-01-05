@@ -12,17 +12,17 @@ from abstract import WeatherProvider
 
 class AccuWeatherProvider(WeatherProvider):
 
-    """Weather provider for AccuWeather site.
+    """ Weather provider for AccuWeather site.
     """
 
     name = config.ACCU_PROVIDER_NAME
     title = config.ACCU_PROVIDER_TITLE
 
     default_location = config.DEFAULT_ACCU_LOCATION_NAME
-    default_url = config.DEFAULT_ACCU_LOCATION_URL    
+    default_url = config.DEFAULT_ACCU_LOCATION_URL
 
     def get_locations(self, locations_url):
-        """Gets list of available locations.
+        """ Gets list of available locations.
         """
 
         locations_page = self.get_page_source(locations_url)
@@ -35,7 +35,7 @@ class AccuWeatherProvider(WeatherProvider):
         return locations
 
     def configurate(self):
-        """Configure provider.
+        """ Configure provider.
         """
 
         locations = self.get_locations(config.ACCU_BROWSE_LOCATIONS)
@@ -50,7 +50,7 @@ class AccuWeatherProvider(WeatherProvider):
         self.save_configuration(*location)
 
     def get_weather_info(self, page_source):
-        """Gets data from the site using the BeautifulSoup library.
+        """ Gets data from the site using the BeautifulSoup library.
         """
 
         city_page = BeautifulSoup(page_source, 'html.parser')
@@ -87,7 +87,7 @@ class AccuWeatherProvider(WeatherProvider):
 
 class Rp5WeatherProvider(WeatherProvider):
 
-    """Weather provider for rp5.ua site.
+    """ Weather provider for rp5.ua site.
     """
 
     name = config.RP5_PROVIDER_NAME
@@ -130,7 +130,7 @@ class Rp5WeatherProvider(WeatherProvider):
         return cities
 
     def configurate(self):
-        """Configure provider.
+        """ Configure provider.
         """
 
         countries = self.get_countries(config.RP5_BROWSE_LOCATIONS)
@@ -147,7 +147,7 @@ class Rp5WeatherProvider(WeatherProvider):
         self.save_configuration(*city)
 
     def get_weather_info(self, page_content):
-        """Gets data from the site using the BeautifulSoup library
+        """ Gets data from the site using the BeautifulSoup library.
         """
 
         city_page = BeautifulSoup(page_content, 'html.parser')
