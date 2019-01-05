@@ -1,4 +1,4 @@
-""" Abstract classes for project
+""" Abstract classes for project.
 """
 
 import abc
@@ -40,7 +40,7 @@ class Command(abc.ABC):
 
 class WeatherProvider(Command):
 
-    """Weather provider abstract class.
+    """ Weather provider abstract class.
 
     Defines behavior for all weather providers.
     """
@@ -74,13 +74,13 @@ class WeatherProvider(Command):
 
     @staticmethod
     def get_configuration_file():
-        """Returns path to configuration file in home directory.
+        """ Returns path to configuration file in home directory.
         """
 
         return Path.home() / config.CONFIG_FILE
 
     def _get_configuration(self):
-        """Returns configured location name and url.
+        """ Returns configured location name and url.
 
         :return: city name and url
         :rtype: tuple
@@ -97,7 +97,7 @@ class WeatherProvider(Command):
         return name, url
 
     def save_configuration(self, name, url):
-        """Save selected location to configuration file.
+        """ Saves selected location to configuration file.
 
         :param name: city name
         :param type: str
@@ -113,34 +113,34 @@ class WeatherProvider(Command):
 
     @staticmethod
     def get_request_headers():
-        """Returns custom headers for url request.
+        """ Returns custom headers for url request.
         """
 
         return {'User-Agent': config.FAKE_MOZILLA_AGENT}
 
     @staticmethod
     def get_url_hash(url):
-        """Generates url hash.
+        """ Generates url hash.
         """
 
         return hashlib.md5(url.encode('utf-8')).hexdigest()
 
     @staticmethod
     def get_cache_directory():
-        """Path to cache directory.
+        """ Path to cache directory.
         """
 
         return Path.home() / config.CACHE_DIR
 
     @staticmethod
     def is_valid(path):
-        """Checks if current cache is valid.
+        """ Checks if current cache is valid.
         """
 
         return (time.time() - path.stat().st_mtime) < config.CACHE_TIME
 
     def get_cache(self, url):
-        """Returns cache by given url address if any.
+        """ Returns cache by given url address if any.
         """
 
         cache = b''
@@ -153,7 +153,7 @@ class WeatherProvider(Command):
         return cache
 
     def save_cache(self, url, page_source):
-        """Save page source data to file.
+        """ Saves page source data to file.
         """
 
         cache_dir = self.get_cache_directory()
@@ -164,7 +164,7 @@ class WeatherProvider(Command):
             cache_file.write(page_source)
 
     def get_page_source(self, url, refresh=False):
-        """Gets page source by given url address.
+        """ Gets page source by given url address.
         """
 
         cache = self.get_cache(url)
@@ -177,7 +177,7 @@ class WeatherProvider(Command):
         return page_source.decode('utf-8')
 
     def run(self, argv):
-        """Runs provider.
+        """ Runs provider.
         """
 
         content = self.get_page_source(self.url)
