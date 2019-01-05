@@ -1,4 +1,4 @@
-"""Main application module.
+""" Main application module.
 """
 
 import sys
@@ -9,7 +9,7 @@ from providermanager import ProviderManager
 
 class App:
 
-    """Weather aggregator application.
+    """ Weather aggregator application.
     """
 
     def __init__(self):
@@ -17,7 +17,7 @@ class App:
         self.providermanager = ProviderManager()
 
     def _arg_parse(self):
-        """Initialize argument parser.
+        """ Initialize argument parser.
         """
 
         arg_parser = ArgumentParser(add_help=False)
@@ -27,7 +27,7 @@ class App:
         return arg_parser
 
     def produce_output(self, title, location, info):
-        """Print results.
+        """ Print results.
         """
 
         print(f'{title}:')
@@ -40,7 +40,7 @@ class App:
         print("="*40, end="\n\n")
 
     def run(self, argv):
-        """Run application.
+        """ Run application.
 
         :param argv: list of passed arguments
         """
@@ -63,7 +63,7 @@ class App:
 
 
 def main(argv=sys.argv[1:]):
-    """Main entry point.
+    """ Main entry point.
     """
 
     return App().run(argv)
