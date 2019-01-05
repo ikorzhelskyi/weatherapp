@@ -24,3 +24,18 @@ class Configurate(Command):
             if provider_name in self.app.providermanager:
                 provider_factory = self.app.providermanager.get(provider_name)
                 provider_factory(self.app).configurate()
+
+
+class Providers(Command):
+
+    """Prints list of all providers.
+    """
+
+    name = 'providers'
+
+    def run(self, argv):
+        """ Runs command.
+        """
+
+        for name in self.app.providermanager._providers:
+            print(name)
