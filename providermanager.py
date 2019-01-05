@@ -3,7 +3,7 @@ from providers import AccuWeatherProvider, Rp5WeatherProvider
 
 class ProviderManager:
 
-    """Discovers registered providers and loads them.
+    """ Discovers registered providers and loads them.
     """
 
     def __init__(self):
@@ -11,20 +11,20 @@ class ProviderManager:
         self._load_providers()
 
     def _load_providers(self):
-        """Loads all existing providers.
+        """ Loads all existing providers.
         """
 
         for provider in [AccuWeatherProvider, Rp5WeatherProvider]:
             self.add(provider.name, provider)
     
     def add(self, name, provider):
-        """Add new provider by name.
+        """ Adds new provider by name.
         """
 
         self._providers[name] = provider
 
     def get(self, name):
-        """Get provider by name.
+        """ Gets provider by name.
         """
 
         return self._providers.get(name, None)
