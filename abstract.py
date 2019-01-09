@@ -53,6 +53,11 @@ class WeatherProvider(Command):
         self.url = url
 
     @abc.abstractmethod
+    def get_name(self):
+        """ Provider name.
+        """
+
+    @abc.abstractmethod
     def configurate(self):
         """ Performs provider cnfiguration.
         """
@@ -91,8 +96,8 @@ class WeatherProvider(Command):
         configuration = configparser.ConfigParser()
 
         configuration.read(self.get_configuration_file())
-        if config.CONFIG_LOCATION in configuration.sections():
-            location_config = configuration[config.CONFIG_LOCATION]
+        if self.get_name() in configuration.sections():
+            location_config = configuration[self.get_name()]
             name, url = location_config['name'], location_config['url']
         return name, url
 
@@ -107,8 +112,13 @@ class WeatherProvider(Command):
         """
 
         parser = configparser.ConfigParser()
-        parser[config.CONFIG_LOCATION] = {'name': name, 'url': url}
-        with open(self.get_configuration_file(), 'w') as configfile:
+        config_file = self.get_configuration_file()
+
+        if config_file.exists():
+            parser.read(config_file)
+
+        parser[self.get_name()] = {'name': name, 'url': url}
+        with open(config_file, 'w') as configfile:
             parser.write(configfile)
 
     @staticmethod
