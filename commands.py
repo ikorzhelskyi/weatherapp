@@ -6,8 +6,10 @@ from abstract import Command
 
 class Configurate(Command):
 
-    """ Help to configure weatherapp providers.
+    """ Helps to configure weatherapp providers.
     """
+
+    name = 'configurate'
 
     def get_parser(self):
         parser = super().get_parser()
@@ -28,7 +30,7 @@ class Configurate(Command):
 
 class Providers(Command):
 
-    """Prints list of all providers.
+    """ Prints list of all providers.
     """
 
     name = 'providers'
