@@ -21,6 +21,9 @@ class AccuWeatherProvider(WeatherProvider):
     default_location = config.DEFAULT_ACCU_LOCATION_NAME
     default_url = config.DEFAULT_ACCU_LOCATION_URL
 
+    def get_name(self):
+        return self.name
+
     def get_locations(self, locations_url):
         """ Gets list of available locations.
         """
@@ -95,6 +98,9 @@ class Rp5WeatherProvider(WeatherProvider):
 
     default_location = config.DEFAULT_RP5_LOCATION_NAME
     default_url = config.DEFAULT_RP5_LOCATION_URL
+
+    def get_name(self):
+        return self.name
 
     def get_countries(self, countries_url):
         """ Gets countries list.
