@@ -169,7 +169,7 @@ class Rp5WeatherProvider(WeatherProvider):
                 temp = archive_info.find('span', class_='t_0')
                 if temp:
                     weather_info['temp'] = temp.text
-                wind = info_list[3].strip()[:info_list[3].find(')') + 1]
+                wind = info_list[2].strip()[:info_list[2].find(')') + 1]
                 wind += info_list[4]
                 if wind:
                     weather_info['wind'] = wind
