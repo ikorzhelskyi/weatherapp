@@ -17,7 +17,7 @@ class App:
         self.providermanager = ProviderManager()
 
     def _arg_parse(self):
-        """ Initialize argument parser.
+        """ Initializes argument parser.
         """
 
         arg_parser = ArgumentParser(add_help=False)
@@ -27,7 +27,7 @@ class App:
         return arg_parser
 
     def produce_output(self, title, location, info):
-        """ Print results.
+        """ Prints results.
         """
 
         print(f'{title}:')
@@ -40,7 +40,7 @@ class App:
         print("="*40, end="\n\n")
 
     def run(self, argv):
-        """ Run application.
+        """ Runs application.
 
         :param argv: list of passed arguments
         """
@@ -49,13 +49,13 @@ class App:
         command_name = self.options.command
 
         if not command_name:
-            # run all weather providers by default
-            for name, provider in self.providermanager._providers.items():
+            # runs all weather providers by default
+            for name, provider in self.providermanager._commands.items():
                 self.produce_output(provider.title,
                                     provider(self).location,
                                     provider(self).run(remaining_args))
         elif command_name in self.providermanager:
-            # run specific provider
+            # runs specific provider
             provider = self.providermanager[command_name](self)
             self.produce_output(provider.title,
                                 provider.location,
