@@ -59,6 +59,16 @@ class WeatherProvider(Command):
         """
 
     @abc.abstractmethod
+    def get_default_location(self):
+        """ Default location name.
+        """
+
+    @abc.abstractmethod
+    def get_default_url(self):
+        """ Default location url.
+        """
+
+    @abc.abstractmethod
     def configurate(self):
         """ Performs provider cnfiguration.
         """
