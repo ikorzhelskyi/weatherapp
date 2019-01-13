@@ -102,8 +102,8 @@ class WeatherProvider(Command):
         :rtype: tuple
         """
 
-        name = self.default_location
-        url = self.default_url
+        name = self.get_default_location()
+        url = self.get_default_url()
         configuration = configparser.ConfigParser()
 
         configuration.read(self.get_configuration_file())
