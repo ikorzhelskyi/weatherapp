@@ -4,6 +4,7 @@
 import sys
 from argparse import ArgumentParser
 
+from commandmanager import CommandManager
 from providermanager import ProviderManager
 
 
@@ -15,6 +16,7 @@ class App:
     def __init__(self):
         self.arg_parser = self._arg_parse()
         self.providermanager = ProviderManager()
+        self.commandmanager = CommandManager()
 
     def _arg_parse(self):
         """ Initializes argument parser.
@@ -47,6 +49,10 @@ class App:
 
         self.options, remaining_args = self.arg_parser.parse_known_args(argv)
         command_name = self.options.command
+
+        if command_name in self.commandmanager:
+            command_factory = self.commandmanager.get(command_name)
+            return command_factory(self).run(remaining_args)
 
         if not command_name:
             # runs all weather providers by default
