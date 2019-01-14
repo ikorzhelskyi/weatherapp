@@ -136,13 +136,13 @@ class Rp5WeatherProvider(WeatherProvider):
         if country_map:
             cities_list = country_map.find_all('h3')
             for city in cities_list:
-                url = urllib.parse.urljoin(base, city.find('f').attrs['href'])
+                url = urllib.parse.urljoin(base, city.find('a').attrs['href'])
                 city = city.find('a').text
                 cities.append((city, url))
         return cities
 
     def configurate(self):
-        """ Configure provider.
+        """ Configures provider.
         """
 
         countries = self.get_countries(config.RP5_BROWSE_LOCATIONS)
@@ -152,7 +152,7 @@ class Rp5WeatherProvider(WeatherProvider):
         country = countries[selected_index - 1]
 
         cities = self.get_cities(country[1])
-        for index, country in enumerate(cities):
+        for index, city in enumerate(cities):
             print(f'{index + 1}. {city[0]}')
         selected_index = int(input('Please select city: '))
         city = cities[selected_index - 1]
