@@ -26,7 +26,7 @@ class Command(abc.ABC):
 
     @staticmethod
     def get_parser():
-        """ Initialize argument parser for command.
+        """ Initializes argument parser for command.
         """
         parser = argparse.ArgumentParser()
         return parser
@@ -106,7 +106,12 @@ class WeatherProvider(Command):
         url = self.get_default_url()
         configuration = configparser.ConfigParser()
 
-        configuration.read(self.get_configuration_file())
+        try:
+            configuration.read(self.get_configuration_file())
+        except configparser.Error:
+            print((f"Bad configuration file. "
+                   f"Please reconfigurate your provider: {self.name}"))
+
         if self.get_name() in configuration.sections():
             location_config = configuration[self.get_name()]
             name, url = location_config['name'], location_config['url']
@@ -212,7 +217,7 @@ class Manager(abc.ABC):
 
     @abc.abstractmethod
     def add(self, name, command):
-        """ Add new command to manager.
+        """ Adds new command to manager.
 
         :param name: command name
         :type name: str
