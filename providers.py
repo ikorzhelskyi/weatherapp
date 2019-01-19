@@ -49,9 +49,16 @@ class AccuWeatherProvider(WeatherProvider):
             for index, location in enumerate(locations):
                 print(f'{index + 1}. {location[0]}')
 
-            selected_index = int(input('Please select location: '))
-            location = locations[selected_index - 1]
-            locations = self.get_locations(location[1])
+            try:
+                selected_index = int(input('Please select location: '))
+                location = locations[selected_index - 1]
+                locations = self.get_locations(location[1])
+            except IndexError:
+                print('You have entered a wrong number.\n'
+                      'Please enter a number from the list below:\n')
+            except ValueError:
+                print("You didn't enter the number.\n"
+                      'Please enter a number from the list below:\n')
 
         self.save_configuration(*location)
 
@@ -146,16 +153,34 @@ class Rp5WeatherProvider(WeatherProvider):
         """
 
         countries = self.get_countries(config.RP5_BROWSE_LOCATIONS)
-        for index, country in enumerate(countries):
-            print(f'{index + 1}. {country[0]}')
-        selected_index = int(input('Please select country: '))
-        country = countries[selected_index - 1]
+        while countries:
+            for index, country in enumerate(countries):
+                print(f'{index + 1}. {country[0]}')
+            try:
+                selected_index = int(input('Please select country: '))
+                country = countries[selected_index - 1]
+                countries = self.get_countries(country[1])
+            except IndexError:
+                print('You have entered a wrong number.\n'
+                      'Please enter a number from the list below:\n')
+            except ValueError:
+                print("You didn't enter the number.\n"
+                      'Please enter a number from the list below:\n')
 
         cities = self.get_cities(country[1])
-        for index, city in enumerate(cities):
-            print(f'{index + 1}. {city[0]}')
-        selected_index = int(input('Please select city: '))
-        city = cities[selected_index - 1]
+        while cities:
+            for index, city in enumerate(cities):
+                print(f'{index + 1}. {city[0]}')
+            try:
+                selected_index = int(input('Please select city: '))
+                city = cities[selected_index - 1]
+                cities = self.get_cities(city[1])
+            except IndexError:
+                print('You have entered a wrong number.\n'
+                      'Please enter a number from the list below:\n')
+            except ValueError:
+                print("You didn't enter the number.\n"
+                      'Please enter a number from the list below:\n')
         self.save_configuration(*city)
 
     def get_weather_info(self, page_content):
