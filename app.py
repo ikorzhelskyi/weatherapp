@@ -52,7 +52,10 @@ class App:
 
         if command_name in self.commandmanager:
             command_factory = self.commandmanager.get(command_name)
-            return command_factory(self).run(remaining_args)
+            try:
+                command_factory(self).run(remaining_args)
+            except Exception:
+                print('Error during command: %s run')
 
         if not command_name:
             # runs all weather providers by default
@@ -66,6 +69,9 @@ class App:
             self.produce_output(provider.title,
                                 provider.location,
                                 provider.run(remaining_args))
+        else:
+            print('Unknown command provided.')
+            sys.exit(1)
 
 
 def main(argv=sys.argv[1:]):
