@@ -2,6 +2,7 @@
 """
 
 import sys
+import logging
 import traceback
 from argparse import ArgumentParser
 
@@ -13,6 +14,8 @@ class App:
 
     """ Weather aggregator application.
     """
+
+    logger = logging.getLogger(__name__)
 
     def __init__(self):
         self.arg_parser = self._arg_parse()
