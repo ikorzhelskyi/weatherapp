@@ -3,6 +3,7 @@
 
 import re
 import urllib
+import traceback
 
 from bs4 import BeautifulSoup
 
@@ -56,9 +57,13 @@ class AccuWeatherProvider(WeatherProvider):
             except IndexError:
                 print('You have entered a wrong number.\n'
                       'Please enter a number from the list below:\n')
+                if self.app.options.debug:
+                    print(traceback.print_exc())
             except ValueError:
                 print("You didn't enter the number.\n"
                       'Please enter a number from the list below:\n')
+                if self.app.options.debug:
+                    print(traceback.print_exc())
 
         self.save_configuration(*location)
 
@@ -163,9 +168,13 @@ class Rp5WeatherProvider(WeatherProvider):
             except IndexError:
                 print('You have entered a wrong number.\n'
                       'Please enter a number from the list below:\n')
+                if self.app.options.debug:
+                    print(traceback.print_exc())
             except ValueError:
                 print("You didn't enter the number.\n"
                       'Please enter a number from the list below:\n')
+                if self.app.options.debug:
+                    print(traceback.print_exc())
 
         cities = self.get_cities(country[1])
         while cities:
@@ -178,9 +187,13 @@ class Rp5WeatherProvider(WeatherProvider):
             except IndexError:
                 print('You have entered a wrong number.\n'
                       'Please enter a number from the list below:\n')
+                if self.app.options.debug:
+                    print(traceback.print_exc())
             except ValueError:
                 print("You didn't enter the number.\n"
                       'Please enter a number from the list below:\n')
+                if self.app.options.debug:
+                    print(traceback.print_exc())
         self.save_configuration(*city)
 
     def get_weather_info(self, page_content):

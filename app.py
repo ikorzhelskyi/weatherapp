@@ -2,6 +2,7 @@
 """
 
 import sys
+import traceback
 from argparse import ArgumentParser
 
 from commandmanager import CommandManager
@@ -26,6 +27,8 @@ class App:
         arg_parser.add_argument('command', help="Command", nargs='?')
         arg_parser.add_argument('--refresh', help="Bypass caches",
                                 action='store_true')
+        arg_parser.add_argument('--debug', help='Show traceback on errors',
+                                action='store_true', default=False)
         return arg_parser
 
     def produce_output(self, title, location, info):
@@ -56,6 +59,8 @@ class App:
                 command_factory(self).run(remaining_args)
             except Exception:
                 print('Error during command: %s run')
+                if self.options.debug:
+                    print(traceback.print_exc())
 
         if not command_name:
             # runs all weather providers by default
