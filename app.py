@@ -36,6 +36,12 @@ class App:
                                 action='store_true')
         arg_parser.add_argument('--debug', help='Show traceback on errors',
                                 action='store_true', default=False)
+        arg_parser.add_argument(
+            '-v', '--verbose',
+            action='count',
+            dest='verbose_level',
+            default=config.DEFAULT_VERBOSE_LEVEL,
+            help='Increase verbosity of output')
         return arg_parser
 
     def configure_logging(self):
