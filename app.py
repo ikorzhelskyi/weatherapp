@@ -6,6 +6,7 @@ import logging
 import traceback
 from argparse import ArgumentParser
 
+import config
 from commandmanager import CommandManager
 from providermanager import ProviderManager
 
@@ -16,6 +17,9 @@ class App:
     """
 
     logger = logging.getLogger(__name__)
+    LOG_LEVEL_MAP = {0: logging.WARNING,
+                     1: logging.INFO,
+                     2: logging.DEBUG}
 
     def __init__(self):
         self.arg_parser = self._arg_parse()
@@ -33,6 +37,21 @@ class App:
         arg_parser.add_argument('--debug', help='Show traceback on errors',
                                 action='store_true', default=False)
         return arg_parser
+
+    def configure_logging(self):
+        """ Creates logging handlers for any log output.
+        """
+
+        root_logger = logging.getLogger('')
+        root_logger.setLevel(logging.DEBUG)
+
+        console = logging.StreamHandler()
+        console_level = self.LOG_LEVEL_MAP.get(self.options.verbose_level,
+                                               logging.WARNING)
+        console.setLevel(console_level)
+        formatter = logging.Formatter(config.DEFAULT_MESSAGE_FORMAT)
+        console.setFormatter(formatter)
+        root_logger.addHandler(console)
 
     def produce_output(self, title, location, info):
         """ Prints results.
@@ -54,6 +73,8 @@ class App:
         """
 
         self.options, remaining_args = self.arg_parser.parse_known_args(argv)
+        self.configure_logging()
+        self.logger.debug("Got the following args %s", argv)
         command_name = self.options.command
 
         if command_name in self.commandmanager:

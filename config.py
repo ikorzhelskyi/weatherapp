@@ -1,3 +1,8 @@
+# Application default verbose and log levels
+DEFAULT_VERBOSE_LEVEL = 0
+# Date and time, logging level name, logger object name, message
+DEFAULT_MESSAGE_FORMAT = '%(asctime)s %(levelname)s %(name)s %(message)s'
+
 # Fake user agent for weather sites requests
 FAKE_MOZILLA_AGENT = 'Mozilla/5.0 (X11; Ubuntu; Linux x86_64;)'
 
