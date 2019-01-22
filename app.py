@@ -3,7 +3,6 @@
 
 import sys
 import logging
-import traceback
 from argparse import ArgumentParser
 
 import config
@@ -34,14 +33,17 @@ class App:
         arg_parser.add_argument('command', help="Command", nargs='?')
         arg_parser.add_argument('--refresh', help="Bypass caches",
                                 action='store_true')
-        arg_parser.add_argument('--debug', help='Show traceback on errors',
-                                action='store_true', default=False)
         arg_parser.add_argument(
             '-v', '--verbose',
             action='count',
             dest='verbose_level',
             default=config.DEFAULT_VERBOSE_LEVEL,
             help='Increase verbosity of output')
+        arg_parser.add_argument(
+            '--debug',
+            action='store_true',
+            default=False,
+            help='Show tracebacks on errors')
         return arg_parser
 
     def configure_logging(self):
@@ -88,9 +90,11 @@ class App:
             try:
                 command_factory(self).run(remaining_args)
             except Exception:
-                print('Error during command: %s run')
+                msg = "Error during command: %s run"
                 if self.options.debug:
-                    print(traceback.print_exc())
+                    self.logger.exception(msg, command_name)
+                else:
+                    self.logger.error(msg, command_name)
 
         if not command_name:
             # runs all weather providers by default

@@ -3,7 +3,6 @@
 
 import re
 import urllib
-import traceback
 
 from bs4 import BeautifulSoup
 
@@ -55,15 +54,17 @@ class AccuWeatherProvider(WeatherProvider):
                 location = locations[selected_index - 1]
                 locations = self.get_locations(location[1])
             except IndexError:
-                print('You have entered a wrong number.\n'
-                      'Please enter a number from the list below:\n')
+                msg = 'You have entered a wrong number.'
                 if self.app.options.debug:
-                    print(traceback.print_exc())
+                    self.app.logger.exception(msg)
+                else:
+                    self.app.logger.error(msg)
             except ValueError:
-                print("You didn't enter the number.\n"
-                      'Please enter a number from the list below:\n')
+                msg = "You didn't enter the number."
                 if self.app.options.debug:
-                    print(traceback.print_exc())
+                    self.app.logger.exception(msg)
+                else:
+                    self.app.logger.error(msg)
 
         self.save_configuration(*location)
 
@@ -166,15 +167,17 @@ class Rp5WeatherProvider(WeatherProvider):
                 country = countries[selected_index - 1]
                 countries = self.get_countries(country[1])
             except IndexError:
-                print('You have entered a wrong number.\n'
-                      'Please enter a number from the list below:\n')
+                msg = 'You have entered a wrong number.'
                 if self.app.options.debug:
-                    print(traceback.print_exc())
+                    self.app.logger.exception(msg)
+                else:
+                    self.app.logger.error(msg)
             except ValueError:
-                print("You didn't enter the number.\n"
-                      'Please enter a number from the list below:\n')
+                msg = "You didn't enter the number."
                 if self.app.options.debug:
-                    print(traceback.print_exc())
+                    self.app.logger.exception(msg)
+                else:
+                    self.app.logger.error(msg)
 
         cities = self.get_cities(country[1])
         while cities:
@@ -185,15 +188,17 @@ class Rp5WeatherProvider(WeatherProvider):
                 city = cities[selected_index - 1]
                 cities = self.get_cities(city[1])
             except IndexError:
-                print('You have entered a wrong number.\n'
-                      'Please enter a number from the list below:\n')
+                msg = 'You have entered a wrong number.'
                 if self.app.options.debug:
-                    print(traceback.print_exc())
+                    self.app.logger.exception(msg)
+                else:
+                    self.app.logger.error(msg)
             except ValueError:
-                print("You didn't enter the number.\n"
-                      'Please enter a number from the list below:\n')
+                msg = "You didn't enter the number."
                 if self.app.options.debug:
-                    print(traceback.print_exc())
+                    self.app.logger.exception(msg)
+                else:
+                    self.app.logger.error(msg)
         self.save_configuration(*city)
 
     def get_weather_info(self, page_content):

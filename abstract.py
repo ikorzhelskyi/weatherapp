@@ -3,7 +3,6 @@
 
 import abc
 import time
-import traceback
 import hashlib
 import argparse
 import configparser
@@ -110,10 +109,12 @@ class WeatherProvider(Command):
         try:
             configuration.read(self.get_configuration_file())
         except configparser.Error:
-            print((f"Bad configuration file. "
-                   f"Please reconfigurate your provider: {self.name}"))
+            msg = f"Bad configuration file. " \
+                  f"Please reconfigurate your provider: {self.name}"
             if self.app.options.debug:
-                print(traceback.print_exc())
+                self.app.logger.exception(msg)
+            else:
+                self.app.logger.error(msg)
 
         if self.get_name() in configuration.sections():
             location_config = configuration[self.get_name()]
