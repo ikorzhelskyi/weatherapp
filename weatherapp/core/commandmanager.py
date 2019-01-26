@@ -2,7 +2,7 @@ from weatherapp.core.commands import Configurate, Providers
 from weatherapp.core.abstract import Manager
 
 
-class CommandManager(abstract.Manager):
+class CommandManager(Manager):
 
     """ Manager for app commands.
     """
