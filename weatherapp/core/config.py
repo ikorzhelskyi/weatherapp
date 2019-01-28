@@ -13,3 +13,6 @@ CONFIG_LOCATION = 'Location'
 # Cache settings
 CACHE_DIR = '.wappcache' # cache directory name
 CACHE_TIME = 300         # how long cache files are valid (in seconds)
+
+# entry points group for providers
+PROVIDER_EP_NAMESPACE = 'weatherapp.provider'
