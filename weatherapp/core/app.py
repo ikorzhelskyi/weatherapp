@@ -5,6 +5,7 @@ import sys
 import logging
 from argparse import ArgumentParser
 
+from weatherapp.core.formatters import TableFormatter
 from weatherapp.core import config
 from weatherapp.core.commandmanager import CommandManager
 from weatherapp.core.providermanager import ProviderManager
@@ -27,6 +28,7 @@ class App:
         self.arg_parser = self._arg_parse()
         self.providermanager = ProviderManager()
         self.commandmanager = CommandManager()
+        self.formatters = self._load_formatters()
 
     def _arg_parse(self):
         """ Initializes argument parser.
@@ -54,6 +56,10 @@ class App:
             help='Show tracebacks on errors')
         return arg_parser
 
+    @staticmethod
+    def _load_formatters():
+        return {'table': TableFormatter}
+
     def configure_logging(self):
         """ Creates logging handlers for any log output.
         """
@@ -69,18 +75,49 @@ class App:
         console.setFormatter(formatter)
         root_logger.addHandler(console)
 
-    def produce_output(self, title, location, info):
+    def produce_output(self, title, location, data):
         """ Prints results.
         """
 
-        print(f'{title}:')
-        print("#"*10, end='\n\n')
+        formatter = self.formatters.get(self.options.formatter, 'table')()
+        columns = [title, location]
 
-        print(f'{location}')
-        print("-"*20)
-        for key, value in info.items():
-            print(f'{key}: {value}')
-        print("="*40, end="\n\n")
+        self.stdout.write(formatter.emit(columns, data))
+        self.stdout.write('\n')
+
+    def run_command(self, name, argv):
+        """ Runs command.
+        """
+        command = self.commandmanager.get(name)
+        try:
+            command(self).run(argv)
+        except Exception:
+            msg = "Error during command: %s run"
+            if self.options.debug:
+                self.logger.exception(msg, name)
+            else:
+                self.logger.error(msg, name)
+
+    def run_provider(self, name, argv):
+        """ Runs specified provider.
+        """
+
+        provider = self.providermanager.get(name)
+        if provider:
+            provider = provider(self)
+            self.produce_output(provider.title,
+                                provider.location,
+                                provider.run(argv))
+
+    def run_providers(self, argv):
+        """ Executes all available providers.
+        """
+
+        for provider in self.providermanager._commands.values():
+            provider = provider(self)
+            self.produce_output(provider.title,
+                                provider.location,
+                                provider.run(argv))
 
     def run(self, argv):
         """ Runs application.
@@ -90,35 +127,17 @@ class App:
 
         self.options, remaining_args = self.arg_parser.parse_known_args(argv)
         self.configure_logging()
-        self.logger.debug("Got the following args %s", argv)
+
         command_name = self.options.command
+        if not command_name:
+            # runs all providers
+            return self.run_providers(remaining_args)
 
         if command_name in self.commandmanager:
-            command_factory = self.commandmanager.get(command_name)
-            try:
-                command_factory(self).run(remaining_args)
-            except Exception:
-                msg = "Error during command: %s run"
-                if self.options.debug:
-                    self.logger.exception(msg, command_name)
-                else:
-                    self.logger.error(msg, command_name)
+            return self.run_command(command_name, remaining_args)
 
-        if not command_name:
-            # runs all weather providers by default
-            for name, provider in self.providermanager._commands.items():
-                self.produce_output(provider.title,
-                                    provider(self).location,
-                                    provider(self).run(remaining_args))
-        elif command_name in self.providermanager:
-            # runs specific provider
-            provider = self.providermanager[command_name](self)
-            self.produce_output(provider.title,
-                                provider.location,
-                                provider.run(remaining_args))
-        else:
-            print('Unknown command provided.')
-            sys.exit(1)
+        if command_name in self.providermanager:
+            return self.run_provider(command_name, remaining_args)
 
 
 def main(argv=sys.argv[1:]):
