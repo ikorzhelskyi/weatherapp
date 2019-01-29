@@ -20,7 +20,10 @@ class App:
                      1: logging.INFO,
                      2: logging.DEBUG}
 
-    def __init__(self):
+    def __init__(self, stdin=None, stdout=None, stderr=None):
+        self.stdin = stdin or sys.stdin
+        self.stdout = stdout or sys.stdout
+        self.stderr = stderr or sys.stderr
         self.arg_parser = self._arg_parse()
         self.providermanager = ProviderManager()
         self.commandmanager = CommandManager()
