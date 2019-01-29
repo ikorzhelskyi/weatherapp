@@ -37,6 +37,11 @@ class App:
         arg_parser.add_argument('--refresh', help="Bypass caches",
                                 action='store_true')
         arg_parser.add_argument(
+            '-f', '--formatter',
+            action='store',
+            default='table',
+            help="Output format, defaults to table")
+        arg_parser.add_argument(
             '-v', '--verbose',
             action='count',
             dest='verbose_level',
