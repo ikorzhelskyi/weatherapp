@@ -2,6 +2,7 @@
 """
 
 import time
+import sys
 
 
 def one_moment(func):
@@ -37,7 +38,7 @@ def timer(func):
         start_time = time.perf_counter()
         result = func(*args, **kwargs)
         run_time = time.perf_counter() - start_time
-        print(f"Finished {func.__name__!r} in {run_time:.4f} secs")
+        sys.stdout.write(f"Finished {func.__name__!r} in {run_time:.4f} secs\n")
         return result
     return wrapper
 
@@ -47,7 +48,7 @@ def print_arguments(func):
     """
 
     def wrapper(*args, **kwargs):
-        print(args, kwargs)
+        sys.stdout.write(f'{args}, {kwargs}\n')
         res = func(*args, **kwargs)
         return res
     return wrapper

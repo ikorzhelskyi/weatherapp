@@ -139,6 +139,10 @@ class App:
         if command_name in self.providermanager:
             return self.run_provider(command_name, remaining_args)
 
+        else:
+            self.stdout.write('Unknown command provided. \n')
+            sys.exit(1)
+
 
 def main(argv=sys.argv[1:]):
     """ Main entry point.
