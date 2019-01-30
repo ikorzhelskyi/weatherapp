@@ -1,5 +1,6 @@
 import abc
 import time
+import sys
 import hashlib
 import configparser
 from pathlib import Path
@@ -17,10 +18,10 @@ class WeatherProvider(Command):
     Defines behavior for all weather providers.
     """
 
-    def __init__(self, app):
+    def __init__(self, app, stdout=None):
         super().__init__(app)
-
         location, url = self._get_configuration()
+        self.stdout = stdout or sys.stdout
         self.location = location
         self.url = url
 
