@@ -30,7 +30,8 @@ class App:
         self.commandmanager = CommandManager()
         self.formatters = self._load_formatters()
 
-    def _arg_parse(self):
+    @staticmethod
+    def _arg_parse():
         """ Initializes argument parser.
         """
 
