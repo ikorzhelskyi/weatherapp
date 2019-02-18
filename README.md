@@ -79,4 +79,4 @@ Optional argument for logging messages starting from DEBUG level:
 `-vv`
 
 Optional argument for output format (default to table):
-`-- formatter`
+`-f` or `-- formatter`
